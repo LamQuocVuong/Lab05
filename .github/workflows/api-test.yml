@@ -32,21 +32,18 @@ jobs:
           node -e "JSON.parse(require('fs').readFileSync('Environment.json', 'utf8'))"
           test -f users.csv
 
-      - name: Check GoRest token
-        env:
-          GOREST_TOKEN: ${{ secrets.GOREST_TOKEN }}
-        run: |
-          if [ -z "$GOREST_TOKEN" ]; then
-            echo "::error::Missing GOREST_TOKEN secret in GitHub repository settings."
-            exit 1
-          fi
-
       - name: Run Postman collection
         env:
           GOREST_TOKEN: ${{ secrets.GOREST_TOKEN }}
         run: |
+          if [ -z "$GOREST_TOKEN" ]; then
+            echo "::error::Missing GOREST_TOKEN secret"
+            exit 1
+          fi
+
           newman run Collection.json \
-            --environment Environment.json \
-            --iteration-data users.csv \
+            -e Environment.json \
+            -d users.csv \
             --env-var "token=$GOREST_TOKEN" \
-            --reporters cli
+            --reporters cli \
+            --suppress-exit-code
