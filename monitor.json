@@ -1,11 +1,31 @@
-<escape>{
+{
   "info": {
     "name": "2474802010446_LamQuocVuong_Monitor",
+    "description": "Monitor GoRest public users endpoint: HTTP 200 and response time under 800ms.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "GET /users - Response Time",
+      "name": "GET /users - Status and Response Time",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response time is under 800ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(800);",
+              "});",
+              "pm.test('Response is valid JSON', function () {",
+              "    pm.response.to.be.json;",
+              "});"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [
@@ -18,7 +38,9 @@
           "raw": "https://gorest.co.in/public/v2/users",
           "protocol": "https",
           "host": [
-            "gorest.co.in"
+            "gorest",
+            "co",
+            "in"
           ],
           "path": [
             "public",
@@ -27,19 +49,7 @@
           ]
         }
       },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code la 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('Response time < 800ms', function () { pm.expect(pm.response.responseTime).to.be.below(800); });"
-            ]
-          }
-        }
-      ],
       "response": []
     }
   ]
-}</escape>
+}
