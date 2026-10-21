@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "2474802010356_TranThanh_Monitor",
+    "name": "2474802010446_LamQuocVuong_Monitor",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -18,9 +18,7 @@
           "raw": "https://gorest.co.in/public/v2/users",
           "protocol": "https",
           "host": [
-            "gorest",
-            "co",
-            "in"
+            "gorest.co.in"
           ],
           "path": [
             "public",
@@ -35,8 +33,8 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test(\"Status code la 200\", () => pm.response.to.have.status(200));",
-              "pm.test(\"Response time < 800ms\", () => pm.expect(pm.response.responseTime).to.be.below(800));"
+              "pm.test('Status code la 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Response time < 800ms', function () { pm.expect(pm.response.responseTime).to.be.below(800); });"
             ]
           }
         }
