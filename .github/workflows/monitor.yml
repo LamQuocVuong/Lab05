@@ -5,22 +5,28 @@ on:
     - cron: '0 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   monitor:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
-      - name: Check GoRest API response
-        run: |
-          response=$(curl -sS -o response.json -w "%{http_code} %{time_total}" https://gorest.co.in/public/v2/users)
-          status=$(echo "$response" | awk '{print $1}')
-          time=$(echo "$response" | awk '{print $2}')
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-          echo "HTTP status: $status"
-          echo "Response time: ${time}s"
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-          test "$status" = "200"
-          awk -v t="$time" 'BEGIN { exit !(t < 0.8) }' || {
-            echo "Response time is not under 800ms"
-            exit 1
-          }
+      - name: Install Newman
+        run: npm install --global newman
+
+      - name: Validate monitor collection JSON
+        run: node -e "JSON.parse(require('fs').readFileSync('monitor.json', 'utf8')); console.log('monitor.json is valid JSON')"
+
+      - name: Run Postman monitor collection
+        run: newman run monitor.json --reporters cli
