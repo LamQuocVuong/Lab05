@@ -1,0 +1,26 @@
+name: GoRest API Monitor
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check GoRest API response
+        run: |
+          response=$(curl -sS -o response.json -w "%{http_code} %{time_total}" https://gorest.co.in/public/v2/users)
+          status=$(echo "$response" | awk '{print $1}')
+          time=$(echo "$response" | awk '{print $2}')
+
+          echo "HTTP status: $status"
+          echo "Response time: ${time}s"
+
+          test "$status" = "200"
+          awk -v t="$time" 'BEGIN { exit !(t < 0.8) }' || {
+            echo "Response time is not under 800ms"
+            exit 1
+          }
